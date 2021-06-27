@@ -1,6 +1,6 @@
 pragma solidity ^0.5.17;
 
-import "./dETH.sol";
+import "./dEth.sol";
 
 contract IPriceFeed
 {

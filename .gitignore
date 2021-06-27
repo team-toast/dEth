@@ -1,7 +1,7 @@
 flat.sol 
-smart-contracts/dETH/build/
+smart-contracts/dEth/build/
 artifacts/
-smart-contracts/dETH/build/contracts/Common.json
+smart-contracts/dEth/build/contracts/Common.json
 smart-contracts/dEth2/build/
 
 .fake

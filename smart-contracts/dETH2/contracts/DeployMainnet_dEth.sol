@@ -1,6 +1,6 @@
 pragma solidity ^0.5.0;
 
-import "./dETH.sol";
+import "./dEth.sol";
 
 contract DeployMainnet_dEth 
 {
