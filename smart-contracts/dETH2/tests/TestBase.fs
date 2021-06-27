@@ -1,24 +1,49 @@
 module TestBase
 
-open Nethereum.Web3
-open FsUnit.Xunit
-open Microsoft.FSharp.Control
-open FSharp.Data
 open System
-open Nethereum.RPC.Eth.DTOs
 open System.Numerics
-open Nethereum.Hex.HexTypes
 open System.IO
-open Newtonsoft.Json
-open Newtonsoft.Json.Linq
+open System.Text
+open System.Threading.Tasks
+open Nethereum.Web3
+open Nethereum.Web3.Accounts
+open Nethereum.Util
 open Nethereum.Contracts
 open Nethereum.Hex.HexConvertors.Extensions
-open System.Text
-open Constants
+open Nethereum.RPC.Eth.DTOs
+open Nethereum.RPC.Infrastructure
+open Nethereum.Hex.HexTypes
+open Nethereum.JsonRpc.Client
+open FsUnit.Xunit
+open Microsoft.FSharp.Control
+open Newtonsoft.Json
+open Newtonsoft.Json.Linq
 open Foundry.Contracts.Debug.ContractDefinition
-open System.Threading.Tasks
-open Nethereum.Web3.Accounts
-open System.Threading
+open Constants
+open Microsoft.Extensions.Configuration
+
+module Array =
+    let ensureSize size array =
+        let paddingArray = Array.init size (fun _ -> byte 0)
+        Array.concat [|array;paddingArray|] |> Array.take size
+
+type GanacheEvmSnapshot(client) = 
+    inherit GenericRpcRequestResponseHandlerNoParam<string>(client, "evm_snapshot")
+
+type HardhatForkInput() =
+    [<JsonProperty(PropertyName = "jsonRpcUrl")>]
+    member val JsonRpcUrl = "" with get, set
+    [<JsonProperty(PropertyName = "blockNumber")>]
+    member val BlockNumber = 0UL with get, set
+
+type HardhatResetInput() =
+    [<JsonProperty(PropertyName = "forking")>]
+    member val Forking = HardhatForkInput() with get, set
+
+type HardhatReset(client) = 
+    inherit RpcRequestResponseHandler<bool>(client, "hardhat_reset")
+
+    member __.SendRequestAsync (input:HardhatResetInput) (id:obj) = base.SendRequestAsync(id, input);
 
 let rnd = Random()
 
@@ -48,10 +73,19 @@ type IAsyncTxSender =
     abstract member SendTxAsync : string -> BigInteger -> string -> Task<TransactionReceipt>
 
 type EthereumConnection(nodeURI: string, privKey: string) =
+    
+    // this is needed to reset nonce.
+    let getWeb3Unsigned () = (Web3(nodeURI))
+    let getWeb3 () = Web3(Account(privKey), nodeURI)
+    
+    let mutable web3Unsigned = getWeb3Unsigned ()
+    let mutable web3 = getWeb3 ()
+    
     member val public Gas = hexBigInt 9500000UL
     member val public GasPrice = hexBigInt 8000000000UL
-    member val public Account = Accounts.Account(privKey)
-    member val public Web3 = Web3(Accounts.Account(privKey), nodeURI)
+    member this.Account with get() = web3.TransactionManager.Account
+    member this.Web3 with get() = web3
+    member this.Web3Unsigned with get() = web3Unsigned
 
     interface IAsyncTxSender with
         member this.SendTxAsync toAddress value data = 
@@ -60,21 +94,21 @@ type EthereumConnection(nodeURI: string, privKey: string) =
                     data, 
                     toAddress, 
                     this.Account.Address, 
-                    this.Gas, 
+                    this.Gas,
                     this.GasPrice, 
                     HexBigInteger(value))
             this.Web3.Eth.TransactionManager.SendTransactionAndWaitForReceiptAsync(input, null)
 
     member this.DeployContractAsync (abi: Abi) (arguments: obj array) =
         this.Web3.Eth.DeployContract.SendRequestAndWaitForReceiptAsync(
-            abi.AbiString, 
-            abi.Bytecode, 
-            this.Account.Address, 
-            this.Gas, this.GasPrice, 
-            hexBigInt 0UL, 
-            null, 
+            abi.AbiString,
+            abi.Bytecode,
+            this.Account.Address,
+            this.Gas, this.GasPrice,
+            hexBigInt 0UL,
+            null,
             arguments)
-                
+
     member this.TimeTravel seconds =
         this.Web3.Client.SendRequestAsync(method = "evm_increaseTime", paramList = [| seconds |]) 
         |> Async.AwaitTask
@@ -95,6 +129,38 @@ type EthereumConnection(nodeURI: string, privKey: string) =
 
     member this.SendEther address amount =
         this.SendEtherAsync address amount |> runNow
+
+    member this.ImpersonateAccount (address:string) =
+        this.Web3.Client.SendRequestAsync(new RpcRequest(0, "hardhat_impersonateAccount", address)) |> runNowWithoutResult
+
+    member this.MakeImpersonatedCallAsync weiValue gasLimit gasPrice addressFrom addressTo (functionArgs:#FunctionMessage) =
+        this.ImpersonateAccount addressFrom
+
+        let txInput = functionArgs.CreateTransactionInput(addressTo)
+        
+        txInput.From <- addressFrom
+        txInput.Gas <- gasLimit
+        txInput.GasPrice <- gasPrice
+        txInput.Value <- weiValue
+
+        this.Web3Unsigned.TransactionManager.SendTransactionAndWaitForReceiptAsync(txInput, tokenSource = null)
+       
+    member this.MakeImpersonatedCallWithNoEtherAsync addressFrom addressTo (functionArgs:#FunctionMessage) = this.MakeImpersonatedCallAsync (hexBigInt 0UL) (hexBigInt 9500000UL) (hexBigInt 0UL) addressFrom addressTo functionArgs
+    
+    member this.MakeImpersonatedCallWithNoEther addressFrom addressTo (functionArgs:#FunctionMessage) = this.MakeImpersonatedCallWithNoEtherAsync addressFrom addressTo functionArgs |> runNow
+
+    member this.MakeSnapshotAsync () = GanacheEvmSnapshot(this.Web3.Client).SendRequestAsync()
+    
+    member this.MakeSnapshot = this.MakeSnapshotAsync >> runNow
+
+    member this.RestoreSnapshot snapshotID =
+        this.Web3.Client.SendRequestAsync(new RpcRequest(1, "evm_revert", [|snapshotID|])) |> runNowWithoutResult
+        web3 <- getWeb3()
+        web3Unsigned <- getWeb3Unsigned()
+
+    member this.HardhatResetAsync blockNumber url =
+        let input = HardhatResetInput(Forking=HardhatForkInput(BlockNumber=blockNumber,JsonRpcUrl=url))
+        HardhatReset(this.Web3.Client).SendRequestAsync input None
 
 
 type Profile = { FunctionName: string; Duration: string }
@@ -145,23 +211,6 @@ type ContractPlug(ethConn: EthereumConnection, abi: Abi, address) =
     member this.ExecuteFunction functionName arguments = 
         this.ExecuteFunctionAsync functionName arguments |> runNow
 
-(*
-  console.log:
-    result of reading 3429740000000000000000
-    Price RAY:  3429740000000000000000000000000
-    _totalCollateral:  71638314300090806328
-    _debt:  116825771461731288902718
-    _collateralDenominatedDebt:  34062573682474849086
-    _excessCollateral:  37575740617615957242
-
-    result of reading 150000000000000000
-    Price RAY:  150000000000000000000000000
-    _totalCollateral:  44505286405029419769
-    _debt:  72577983851111819876169
-    _collateralDenominatedDebt:  483853225674078799174460
-*)
-
-
 type Debug(ethConn: EthereumConnection) =
     member val public EthConn = ethConn
     member val public AsyncTxSender = ethConn :> IAsyncTxSender
@@ -205,6 +254,7 @@ let ganacheMnemonic = "join topple vapor pepper sell enter isolate pact syrup sh
 let hardhatPrivKey = "ac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80"
 let hardhatPrivKey2 = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d"
 let rinkebyPrivKey = "5ca35a65adbd49af639a3686d7d438dba1bcef97cf1593cd5dd8fd79ca89fa3c"
+let blockNumber = 12330245UL
 
 let isRinkeby rinkeby notRinkeby =
     match useRinkeby with
@@ -214,7 +264,6 @@ let isRinkeby rinkeby notRinkeby =
 let ethConn =
     isRinkeby (EthereumConnection(rinkebyURI, rinkebyPrivKey)) (EthereumConnection(hardhatURI, hardhatPrivKey))
 
-let debug = Debug(ethConn)
 
 let shouldEqualIgnoringCase (a: string) (b: string) =
     let aString = a |> string
@@ -243,6 +292,15 @@ let makeAccount() =
     let privateKey = ecKey.GetPrivateKeyAsBytes().ToHex();
     Account(privateKey);
 
+let makeAccountWithBalance () =
+    let account = makeAccount()
+    
+    ethConn.GasPrice.Value * ethConn.Gas.Value * bigint 2
+    |> ethConn.SendEther account.Address
+    |> shouldSucceed
+
+    account
+
 let getABI str = Abi(__SOURCE_DIRECTORY__ + (sprintf "/../build/contracts/%s.json" str))
 
 let makeContract parameters contractName =
@@ -256,7 +314,32 @@ let padAddress (address:string) =
     
     (Array.replicate (bytesToPad * 2) '0' |> String) + addressWithout0x
 
-let startOfSale = debug.BlockTimestamp + BigInteger (1UL * hours)
-let bucketPeriod = 7UL * hours |> BigInteger
-let bucketSupply = 50000UL |> BigInteger
-let bucketCount = 1250UL |> BigInteger
+let strToByte32 (str:string) = System.Text.Encoding.UTF8.GetBytes(str) |> Array.ensureSize 32
+
+let bigintToByte size (a:BigInteger) = 
+    let bytes = a.ToByteArray()
+    bytes |> Array.ensureSize size |> Array.rev
+
+let doTimes x action = 
+    for _ in 1..x do
+        action ()
+
+let inline toBigDecimal (x:BigInteger) : BigDecimal = BigDecimal(x, 0);
+let inline toBigInt (x:BigDecimal) = x.Mantissa / BigInteger.Pow(bigint 10, -x.Exponent)
+
+let bigintDifference a b (precision:int) =
+    Math.Round(decimal <| toBigDecimal a / toBigDecimal b, precision)
+
+let toE18 (v:float) = 
+    BigDecimal(decimal v) * (toBigDecimal E18) |> toBigInt
+
+let balanceOf (contract:ContractPlug) address = 
+    contract.Query "balanceOf" [|address|]
+
+// reset the state to a particular block every time we start the tests to avoid having different state on different runs
+let alchemyKey = ConfigurationBuilder().AddUserSecrets<HardhatForkInput>().Build().["AlchemyKey"]
+ethConn.HardhatResetAsync blockNumber (sprintf "https://eth-mainnet.alchemyapi.io/v2/%s" alchemyKey)
+|> runNow
+|> should equal true
+
+let debug = Debug(ethConn)
