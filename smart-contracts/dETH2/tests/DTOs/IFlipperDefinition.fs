@@ -1,4 +1,4 @@
-namespace DETH2.Contracts.IFlipper.ContractDefinition
+namespace dEth2.Contracts.IFlipper.ContractDefinition
 
 open System
 open System.Threading.Tasks

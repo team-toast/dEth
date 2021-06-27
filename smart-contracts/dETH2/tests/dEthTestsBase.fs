@@ -3,11 +3,11 @@ module dEthTestsBase
 open TestBase
 open Nethereum.Util
 open System.Numerics
-open DETH2.Contracts.MCDSaverProxy.ContractDefinition
-open DETH2.Contracts.VatLike.ContractDefinition
+open dEth2.Contracts.MCDSaverProxy.ContractDefinition
+open dEth2.Contracts.VatLike.ContractDefinition
 open DEth.Contracts.IMakerOracleAdvanced.ContractDefinition
 
-type GiveFunctionCdp = DETH2.Contracts.ManagerLike.ContractDefinition.GiveFunction
+type GiveFunctionCdp = dEth2.Contracts.ManagerLike.ContractDefinition.GiveFunction
 type VatUrnsOutputDTO = UrnsOutputDTO
 
 module Array = 

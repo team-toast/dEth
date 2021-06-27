@@ -1,4 +1,4 @@
-namespace DETH2.Contracts.ISpotter.ContractDefinition
+namespace dEth2.Contracts.ISpotter.ContractDefinition
 
 open System
 open System.Threading.Tasks

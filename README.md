@@ -22,7 +22,7 @@ npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/<alchemy api key>
 Finally, run the tests in the tests folder:
 
 ```
-cd smart-contracts/dETH2/tests
+cd smart-contracts/dEth2/tests
 dotnet test
 ```
 

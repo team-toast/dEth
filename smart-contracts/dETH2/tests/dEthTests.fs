@@ -13,12 +13,12 @@ open Nethereum.Hex.HexConvertors.Extensions
 open Nethereum.Web3.Accounts
 open Nethereum.RPC.Eth.DTOs
 open Nethereum.Contracts
-open DETH2.Contracts.dEth.ContractDefinition
-open DETH2.Contracts.MCDSaverProxy.ContractDefinition;
+open dEth2.Contracts.dEth.ContractDefinition
+open dEth2.Contracts.MCDSaverProxy.ContractDefinition;
 
-type SpotterIlksOutputDTO = DETH2.Contracts.ISpotter.ContractDefinition.IlksOutputDTO
-type VatIlksOutputDTO = DETH2.Contracts.VatLike.ContractDefinition.IlksOutputDTO
-type VatUrnsOutputDTO = DETH2.Contracts.VatLike.ContractDefinition.UrnsOutputDTO
+type SpotterIlksOutputDTO = dEth2.Contracts.ISpotter.ContractDefinition.IlksOutputDTO
+type VatIlksOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.IlksOutputDTO
+type VatUrnsOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.UrnsOutputDTO
 
 type System.String with
    member s1.icompare(s2: string) =

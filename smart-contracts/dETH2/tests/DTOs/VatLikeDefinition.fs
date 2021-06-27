@@ -1,4 +1,4 @@
-namespace DETH2.Contracts.VatLike.ContractDefinition
+namespace dEth2.Contracts.VatLike.ContractDefinition
 
 open System
 open System.Threading.Tasks

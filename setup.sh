@@ -9,7 +9,7 @@ echo "Installing dependencies..."
 npm install
 
 echo "Building contracts..."
-cd smart-contracts/dETH2
+cd smart-contracts/dEth2
 npx truffle build
 
 echo "Installing dotnet..."

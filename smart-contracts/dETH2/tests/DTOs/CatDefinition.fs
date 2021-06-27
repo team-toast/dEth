@@ -1,4 +1,4 @@
-namespace DETH2.Contracts.Cat.ContractDefinition
+namespace dEth2.Contracts.Cat.ContractDefinition
 
 open System
 open System.Threading.Tasks

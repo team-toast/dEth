@@ -2,7 +2,7 @@ flat.sol
 smart-contracts/dETH/build/
 artifacts/
 smart-contracts/dETH/build/contracts/Common.json
-smart-contracts/dETH2/build/
+smart-contracts/dEth2/build/
 
 .fake
 .ionide
@@ -10,12 +10,12 @@ smart-contracts/dETH2/build/
 
 bin/
 obj/
-smart-contracts/dETH2/contracts/block.json
+smart-contracts/dEth2/contracts/block.json
 node_modules
 package-lock.json
-smart-contracts/dETH2/tests/paket.lock
-smart-contracts/dETH2/tests/launch-remixd.sh
-smart-contracts/dETH2/tests/launch-hardhat.sh
+smart-contracts/dEth2/tests/paket.lock
+smart-contracts/dEth2/tests/launch-remixd.sh
+smart-contracts/dEth2/tests/launch-hardhat.sh
 .DS_Store
 cache/
-smart-contracts/dETH2/contracts/flat.sol
+smart-contracts/dEth2/contracts/flat.sol
