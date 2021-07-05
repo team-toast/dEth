@@ -7,6 +7,7 @@
     <EmbeddedResource Remove="ContractDefinition\**" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="TypeProvider.fs" />
     <Compile Include="DTOs/ForwarderDefinition.fs" />
     <Compile Include="DTOs/DebugDefinition.fs" />
     <Compile Include="DTOs/TestTokenDefinition.fs" />
@@ -41,6 +42,7 @@
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.4.0" />
     <!--PackageReference Include="Nethereum.Web3" Version="5.0.101" /-->
     <PackageReference Include="Nethereum.Web3" Version="3.8.0" />
+    <PackageReference Include="SolidityProvider" Version="1.0.5" />
     <PackageReference Include="xunit" Version="2.4.1" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
