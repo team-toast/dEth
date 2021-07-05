@@ -1,0 +1,1 @@
+npx hardhat node --fork https://eth-mainnet.alchemyapi.io/v2/-F-xjayZ09BYhaME5Syd-mLDRD2bhv9F &

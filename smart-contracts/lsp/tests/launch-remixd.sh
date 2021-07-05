@@ -1,0 +1,1 @@
+remixd -s ~/git/dEth --remix-ide https://remix.ethereum.org &

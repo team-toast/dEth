@@ -3,6 +3,7 @@ smart-contracts/dEth/build/
 artifacts/
 smart-contracts/dEth/build/contracts/Common.json
 smart-contracts/dEth2/build/
+smart-contracts/lsp/build/
 
 .fake
 .ionide
@@ -19,3 +20,4 @@ smart-contracts/dEth2/tests/launch-hardhat.sh
 .DS_Store
 cache/
 smart-contracts/dEth2/contracts/flat.sol
+smart-contracts/lsp/.vscode/launch.json
