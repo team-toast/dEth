@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.ManagerLike.ContractDefinition
+namespace dEth2.Contracts.ManagerLike.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

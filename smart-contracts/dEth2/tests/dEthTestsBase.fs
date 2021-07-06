@@ -3,12 +3,14 @@ module dEthTestsBase
 open TestBase
 open Nethereum.Util
 open System.Numerics
-open dEth2.Contracts.MCDSaverProxy.ContractDefinition
-open dEth2.Contracts.VatLike.ContractDefinition
-open DEth.Contracts.IMakerOracleAdvanced.ContractDefinition
+//open dEth2.Contracts.MCDSaverProxy.ContractDefinition
+//open dEth2.Contracts.VatLike.ContractDefinition
+//open DEth.Contracts.IMakerOracleAdvanced.ContractDefinition
 
-type GiveFunctionCdp = dEth2.Contracts.ManagerLike.ContractDefinition.GiveFunction
-type VatUrnsOutputDTO = UrnsOutputDTO
+open SolidityTypes
+
+//type GiveFunctionCdp = dEth2.Contracts.ManagerLike.ContractDefinition.GiveFunction
+//type VatUrnsOutputDTO = UrnsOutputDTO
 
 module Array = 
     let removeFromEnd elem = Array.rev >> Array.skipWhile (fun i -> i = elem) >> Array.rev
@@ -111,7 +113,7 @@ let getDEthContract () =
 let getDEthContractEthConn () =
     let _, contract = getDEthContractFromOracle oracleContractMainnet true
     
-    ethConn.MakeImpersonatedCallWithNoEther dEthMainnet makerManager (GiveFunctionCdp(Cdp = cdpId, Dst = contract.Address)) 
+    ethConn.MakeImpersonatedCallWithNoEther dEthMainnet makerManager (Contracts.ManagerLikeContract.giveFunction(Prop0 = cdpId, Prop1 = contract.Address)) 
     |> shouldSucceed
 
     // check that we now own the cdp.
@@ -134,9 +136,9 @@ let getManuallyComputedCollateralValues (oracleContract: ContractPlug) saverProx
     let priceEthDai = (oracleContract.Query<bigint> "getEthDaiPrice") [||]
     let priceRay = BigInteger.Multiply(BigInteger.Pow(bigint 10, 9), priceEthDai)
     let saverProxy = ContractPlug(ethConn, getABI "MCDSaverProxy", saverProxy)
-    let cdpDetailedInfoOutput = saverProxy.QueryObj<GetCdpDetailedInfoOutputDTO> "getCdpDetailedInfo" [|cdpId|]
-    let collateralDenominatedDebt = rdiv cdpDetailedInfoOutput.Debt priceRay
-    let excessCollateral = cdpDetailedInfoOutput.Collateral - collateralDenominatedDebt
+    let cdpDetailedInfoOutput = saverProxy.QueryObj<Contracts.MCDSaverProxyContract.getCdpDetailedInfoOutputDTO> "getCdpDetailedInfo" [|cdpId|]
+    let collateralDenominatedDebt = rdiv cdpDetailedInfoOutput.debt priceRay
+    let excessCollateral = cdpDetailedInfoOutput.collateral - collateralDenominatedDebt
 
     (priceEthDai, priceRay, saverProxy, cdpDetailedInfoOutput, collateralDenominatedDebt, excessCollateral)
 
@@ -147,7 +149,8 @@ let getInkAndUrnFromCdp (cdpManagerContract:ContractPlug) cdpId =
 
 let getInk () =
     let (ilk, urn) = getInkAndUrnFromCdp makerManagerAdvanced cdpId
-    (vatContract.QueryObj<VatUrnsOutputDTO> "urns" [|ilk; urn|]).Ink
+    
+    (vatContract.QueryObj<Contracts.VatLikeContract.urnsOutputDTO> "urns" [|ilk; urn|]).Prop0
 
 let findActiveCDP ilkArg =
     let cdpManagerContract = ContractPlug(ethConn, getABI "IMakerManagerAdvanced", makerManager)
@@ -160,9 +163,9 @@ let findActiveCDP ilkArg =
     let isCDPActive cdpId =
         let (ilkBytes, urn) = getInkAndUrnFromCdp cdpId
         let ilk = System.Text.Encoding.UTF8.GetString(ilkBytes)
-        let urnsOutput = vatContract.QueryObj<UrnsOutputDTO> "urns" [|ilk;urn|]
+        let urnsOutput = vatContract.QueryObj<Contracts.VatLikeContract.urnsOutputDTO> "urns" [|ilk;urn|]
 
-        urnsOutput.Art <> bigint 0 && urnsOutput.Ink <> bigint 0 && ilk = ilkArg
+        urnsOutput.Prop1 <> bigint 0 && urnsOutput.Prop0 <> bigint 0 && ilk = ilkArg
 
     let cdpId = Seq.findBack isCDPActive cdpIds
 
@@ -170,7 +173,8 @@ let findActiveCDP ilkArg =
 
 let pokePIP pipAddress = 
     ethConn.TimeTravel <| Constants.hours * 2UL
-    ethConn.MakeImpersonatedCallWithNoEther ilkPIPAuthority pipAddress (PokeFunction()) |> ignore
+    
+    ethConn.MakeImpersonatedCallWithNoEther ilkPIPAuthority pipAddress ( Contracts.IMakerOracleAdvancedContract.pokeFunction()) |> ignore
 
 let calculateRedemptionValue tokensToRedeem totalSupply excessCollateral automationFeePerc =
     let redeemTokenSupplyPerc = tokensToRedeem * hundredPerc / totalSupply

@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.IMCDSaverProxy.ContractDefinition
+namespace dEth2.Contracts.IMCDSaverProxy.ContractDefinitionOLD
 
 open System.Numerics
 open Nethereum.ABI.FunctionEncoding.Attributes
