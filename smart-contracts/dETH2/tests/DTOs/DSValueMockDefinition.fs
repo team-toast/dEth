@@ -1,4 +1,4 @@
-namespace DEth.Contracts.DSValueMock.ContractDefinition
+namespace DEth.Contracts.DSValueMock.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

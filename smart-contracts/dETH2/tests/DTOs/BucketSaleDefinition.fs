@@ -1,4 +1,4 @@
-namespace Foundry.Contracts.BucketSale.ContractDefinition
+namespace Foundry.Contracts.BucketSale.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks
