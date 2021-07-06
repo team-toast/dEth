@@ -267,6 +267,9 @@ contract dEth is
             _dsProxy);
         
         IDSProxy(address(this)).execute(saverProxyActions, giveProxyCall);
+
+        // removes the ability to mint more dEth tokens
+        riskLimit = 0;
     }
 
     function getCollateral()
@@ -396,7 +399,7 @@ contract dEth is
         _protocolFee = collateralAffected.mul(PROTOCOL_FEE_PERC).div(HUNDRED_PERC);
         _automationFee = collateralAffected.mul(automationFeePerc).div(HUNDRED_PERC);
         _collateralRedeemed = collateralAffected.sub(_automationFee); // how much capital should exit the dEth contract
-        _collateralReturned = collateralAffected.sub(_protocolFee).sub(_automationFee); // how much capital should return to the user
+        _collateralReturned = _collateralRedeemed.sub(_protocolFee); // how much capital should return to the user
     }
 
     event Redeemed(
