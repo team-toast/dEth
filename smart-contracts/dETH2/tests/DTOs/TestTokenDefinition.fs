@@ -1,4 +1,4 @@
-namespace Foundry.Contracts.TestToken.ContractDefinition
+namespace Foundry.Contracts.TestToken.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

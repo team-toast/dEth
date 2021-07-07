@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.PipLike.ContractDefinition
+namespace dEth2.Contracts.PipLike.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

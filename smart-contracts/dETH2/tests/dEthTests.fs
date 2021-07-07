@@ -13,12 +13,14 @@ open Nethereum.Hex.HexConvertors.Extensions
 open Nethereum.Web3.Accounts
 open Nethereum.RPC.Eth.DTOs
 open Nethereum.Contracts
-open dEth2.Contracts.dEth.ContractDefinition
-open dEth2.Contracts.MCDSaverProxy.ContractDefinition;
+//open dEth2.Contracts.dEth.ContractDefinition
+//open dEth2.Contracts.MCDSaverProxy.ContractDefinition;
 
-type SpotterIlksOutputDTO = dEth2.Contracts.ISpotter.ContractDefinition.IlksOutputDTO
-type VatIlksOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.IlksOutputDTO
-type VatUrnsOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.UrnsOutputDTO
+open SolidityTypes
+
+//type SpotterIlksOutputDTO = dEth2.Contracts.ISpotter.ContractDefinition.IlksOutputDTO
+//type VatIlksOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.IlksOutputDTO
+//type VatUrnsOutputDTO = dEth2.Contracts.VatLike.ContractDefinition.UrnsOutputDTO
 
 type System.String with
    member s1.icompare(s2: string) =
@@ -146,15 +148,15 @@ let ``dEth - getCollateral - returns similar values as those directly retrieved 
     restore ()
     let contract = getDEthContract ()
 
-    let getCollateralOutput = contract.QueryObj<GetCollateralOutputDTO> "getCollateral" [||]
+    let getCollateralOutput = contract.QueryObj<Contracts.dEthContract.getCollateralOutputDTO> "getCollateral" [||]
     let (_, priceRay, _, cdpDetailedInfoOutput, collateralDenominatedDebt, excessCollateral) = 
         getManuallyComputedCollateralValues oracleContractMainnet saverProxy cdpId
     
-    should equal priceRay getCollateralOutput.PriceRAY
-    should equal cdpDetailedInfoOutput.Collateral getCollateralOutput.TotalCollateral
-    should equal cdpDetailedInfoOutput.Debt getCollateralOutput.Debt
-    should equal collateralDenominatedDebt getCollateralOutput.CollateralDenominatedDebt
-    should equal excessCollateral getCollateralOutput.ExcessCollateral
+    should equal priceRay getCollateralOutput._priceRAY
+    should equal cdpDetailedInfoOutput.collateral getCollateralOutput._totalCollateral
+    should equal cdpDetailedInfoOutput.debt getCollateralOutput._debt
+    should equal collateralDenominatedDebt getCollateralOutput._collateralDenominatedDebt
+    should equal excessCollateral getCollateralOutput._excessCollateral
 
 [<Specification("dEth", "getCollateralPriceRAY", 0)>]
 [<Fact>]
@@ -189,14 +191,14 @@ let ``dEth - getRatio - returns similar values as those directly retrieved from 
 
     let ilk = manager.Query<string> "ilks" [|cdpId|]
     let price = saverProxyContract.Query<bigint> "getPrice" [|ilk|]
-    let getCdpInfoOutputDTO = saverProxyContract.QueryObj<GetCdpInfoOutputDTO> "getCdpInfo" [|manager.Address;cdpId;ilk|]
+    let getCdpInfoOutputDTO = saverProxyContract.QueryObj<Contracts.MCDSaverProxyContract.getCdpInfoOutputDTO> "getCdpInfo" [|manager.Address;cdpId;ilk|]
 
     let expected = 
-        if getCdpInfoOutputDTO.Debt = BigInteger.Zero 
+        if getCdpInfoOutputDTO.Prop1 = BigInteger.Zero 
         then 
             BigInteger.Zero 
         else 
-            rdiv (wmul getCdpInfoOutputDTO.Collateral price) getCdpInfoOutputDTO.Debt
+            rdiv (wmul getCdpInfoOutputDTO.Prop0 price) getCdpInfoOutputDTO.Prop1
 
     let actual = contract.Query<bigint> "getRatio" [||]
 
@@ -211,10 +213,10 @@ let ``dEth - changeSettings - an authorised address can change the settings`` (a
     restore ()
 
     let changeSettingsTxr = 
-        ChangeSettings(
-            MinRedemptionRatio = bigint minRedemptionRatioExpected,
-            AutomationFeePerc = bigint automationFeePercExpected, 
-            RiskLimit = bigint riskLimitExpected)
+        Contracts.dEthContract.changeSettingsFunction(
+            _minRedemptionRatio = bigint minRedemptionRatioExpected,
+            _automationFeePerc = bigint automationFeePercExpected, 
+            _riskLimit = bigint riskLimitExpected)
         |> ethConn.MakeImpersonatedCallWithNoEther (mapInlineDataArgumentToAddress addressArgument dEthContract.Address) dEthContract.Address
 
     changeSettingsTxr |> shouldSucceed
@@ -223,10 +225,10 @@ let ``dEth - changeSettings - an authorised address can change the settings`` (a
     dEthContract.Query<bigint> "automationFeePerc" [||] |> should equal (bigint automationFeePercExpected)
     dEthContract.Query<bigint> "riskLimit" [||] |> should equal (bigint riskLimitExpected)
 
-    let event = changeSettingsTxr.DecodeAllEvents<SettingsChangedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
-    event.MinRedemptionRatio |> should equal <| (bigint minRedemptionRatioExpected) * ratio
-    event.AutomationFeePerc |> should equal <| bigint automationFeePercExpected
-    event.RiskLimit |> should equal <| bigint riskLimitExpected
+    let event = changeSettingsTxr.DecodeAllEvents<Contracts.dEthContract.SettingsChangedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
+    event._minRedemptionRatio |> should equal <| (bigint minRedemptionRatioExpected) * ratio
+    event._automationFeePerc |> should equal <| bigint automationFeePercExpected
+    event._riskLimit |> should equal <| bigint riskLimitExpected
 
 [<Specification("dEth", "changeSettings", 1)>]
 [<Theory>]
@@ -280,14 +282,14 @@ let ``blah dEth - redeem - someone with a positive balance of dEth can redeem th
 
     balanceOf dEthContract redeemerConnection.Account.Address |> should equal (tokenBalanceBefore - tokensToRedeemBigInt)
 
-    let event = redeemTx.DecodeAllEvents<RedeemedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
-    event.Redeemer |> shouldEqualIgnoringCase redeemerConnection.Account.Address
-    event.Receiver |> shouldEqualIgnoringCase receiverAddress
-    event.TokensRedeemed |> should equal tokensToRedeemBigInt
-    event.ProtocolFee |> should equal protocolFeeExpected
-    event.AutomationFee |> should equal automationFeeExpected
-    event.CollateralRedeemed |> should equal collateralRedeemedExpected
-    event.CollateralReturned |> should equal collateralReturnedExpected
+    let event = redeemTx.DecodeAllEvents<Contracts.dEthContract.RedeemedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
+    event._redeemer |> shouldEqualIgnoringCase redeemerConnection.Account.Address
+    event._receiver |> shouldEqualIgnoringCase receiverAddress
+    event._tokensRedeemed |> should equal tokensToRedeemBigInt
+    event._protocolFee |> should equal protocolFeeExpected
+    event._automationFee |> should equal automationFeeExpected
+    event._collateralRedeemed |> should equal collateralRedeemedExpected
+    event._collateralReturned |> should equal collateralReturnedExpected
 
 [<Specification("dEth", "redeem", 1)>]
 [<Theory>]
@@ -334,15 +336,15 @@ let ``dEth - squanderMyEthForWorthlessBeansAndAgreeToTerms - anyone providing a 
     getInk () |> should equal (inkBefore + actualCollateralAddedExpected)
     getGulperEthBalance () |> should equal (gulperBalanceBefore + protocolFeeExpected)
 
-    let issuedEvent = squanderTxr.DecodeAllEvents<IssuedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
+    let issuedEvent = squanderTxr.DecodeAllEvents<Contracts.dEthContract.IssuedEventDTO>() |> Seq.map (fun i -> i.Event) |> Seq.head
 
-    issuedEvent.Receiver |> shouldEqualIgnoringCase dEthRecipientAddress
-    issuedEvent.SuppliedCollateral |> should equal providedCollateralBigInt
-    issuedEvent.ProtocolFee |> should equal protocolFeeExpected
-    issuedEvent.AutomationFee |> should equal automationFeeExpected
-    issuedEvent.ActualCollateralAdded |> should equal actualCollateralAddedExpected
-    issuedEvent.AccreditedCollateral |> should equal accreditedCollateralExpected
-    issuedEvent.TokensIssued |> should equal tokensIssuedExpected
+    issuedEvent._receiver |> shouldEqualIgnoringCase dEthRecipientAddress
+    issuedEvent._suppliedCollateral |> should equal providedCollateralBigInt
+    issuedEvent._protocolFee |> should equal protocolFeeExpected
+    issuedEvent._automationFee |> should equal automationFeeExpected
+    issuedEvent._actualCollateralAdded |> should equal actualCollateralAddedExpected
+    issuedEvent._accreditedCollateral |> should equal accreditedCollateralExpected
+    issuedEvent._tokensIssued |> should equal tokensIssuedExpected
 
 [<Specification("dEth", "squanderMyEthForWorthlessBeansAndAgreeToTerms", 2)>]
 [<Fact>]

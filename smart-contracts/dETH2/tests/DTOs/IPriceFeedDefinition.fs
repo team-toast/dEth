@@ -1,4 +1,4 @@
-namespace DEth.Contracts.IPriceFeed.ContractDefinition
+namespace DEth.Contracts.IPriceFeed.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

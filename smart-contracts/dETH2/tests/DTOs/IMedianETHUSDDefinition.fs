@@ -1,4 +1,4 @@
-namespace DEth.Contracts.IMedianETHUSD.ContractDefinition
+namespace DEth.Contracts.IMedianETHUSD.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks
