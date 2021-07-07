@@ -1,0 +1,275 @@
+{
+  "contractName": "Debug",
+  "abi": [
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_msgSender",
+          "type": "address"
+        },
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "_wei",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "_success",
+          "type": "bool"
+        },
+        {
+          "indexed": false,
+          "internalType": "bytes",
+          "name": "_resultData",
+          "type": "bytes"
+        }
+      ],
+      "name": "Forwarded",
+      "type": "event"
+    },
+    {
+      "constant": true,
+      "inputs": [],
+      "name": "blockTimestamp",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "constant": false,
+      "inputs": [
+        {
+          "internalType": "address",
+          "name": "_to",
+          "type": "address"
+        },
+        {
+          "internalType": "bytes",
+          "name": "_data",
+          "type": "bytes"
+        }
+      ],
+      "name": "forward",
+      "outputs": [
+        {
+          "internalType": "bool",
+          "name": "",
+          "type": "bool"
+        },
+        {
+          "internalType": "bytes",
+          "name": "",
+          "type": "bytes"
+        }
+      ],
+      "payable": true,
+      "stateMutability": "payable",
+      "type": "function"
+    }
+  ],
+  "metadata": "{\"compiler\":{\"version\":\"0.5.17+commit.d19bba13\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"anonymous\":false,\"inputs\":[{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_msgSender\",\"type\":\"address\"},{\"indexed\":true,\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"},{\"indexed\":false,\"internalType\":\"uint256\",\"name\":\"_wei\",\"type\":\"uint256\"},{\"indexed\":false,\"internalType\":\"bool\",\"name\":\"_success\",\"type\":\"bool\"},{\"indexed\":false,\"internalType\":\"bytes\",\"name\":\"_resultData\",\"type\":\"bytes\"}],\"name\":\"Forwarded\",\"type\":\"event\"},{\"constant\":true,\"inputs\":[],\"name\":\"blockTimestamp\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"internalType\":\"address\",\"name\":\"_to\",\"type\":\"address\"},{\"internalType\":\"bytes\",\"name\":\"_data\",\"type\":\"bytes\"}],\"name\":\"forward\",\"outputs\":[{\"internalType\":\"bool\",\"name\":\"\",\"type\":\"bool\"},{\"internalType\":\"bytes\",\"name\":\"\",\"type\":\"bytes\"}],\"payable\":true,\"stateMutability\":\"payable\",\"type\":\"function\"}],\"devdoc\":{\"methods\":{}},\"userdoc\":{\"methods\":{}}},\"settings\":{\"compilationTarget\":{\"/Users/sjalq/git/dEth/__tmp/smart-contracts/dEth2/contracts/TestHelpers.sol\":\"Debug\"},\"evmVersion\":\"istanbul\",\"libraries\":{},\"optimizer\":{\"enabled\":false,\"runs\":200},\"remappings\":[]},\"sources\":{\"/Users/sjalq/git/dEth/__tmp/smart-contracts/common.5/DebugBase.sol\":{\"keccak256\":\"0xd0dbb6323cc7147ad4bb16dc6dd84e20f3fc1ed22fed8092c9e1d7f3e4db1a5b\",\"urls\":[\"bzz-raw://37dbf402b2c800cb5c3ab0466e3561b923f86ff3cba1d10b92496193929f5bfa\",\"dweb:/ipfs/QmcsbifE5Q3TaNdzs1MvDWsWscKRcjbUKyjXPPcHtAy5NM\"]},\"/Users/sjalq/git/dEth/__tmp/smart-contracts/dEth2/contracts/TestHelpers.sol\":{\"keccak256\":\"0x3b93cea0e3ec79b8efa4a28432d78c5ae977bee8f5951a9af02abfd590aadc08\",\"urls\":[\"bzz-raw://671b76f5397eba6c7de52a4c7ee537f369018e56d356782fc763a388d838c2c2\",\"dweb:/ipfs/QmdXVQUqGoNoNHJkukwKGXVPXjgveUNcLrQ1gfFL2mdYHx\"]}},\"version\":1}",
+  "bytecode": "0x608060405234801561001057600080fd5b5061040f806100206000396000f3fe6080604052600436106100295760003560e01c80636fadcf721461002e578063adb618321461018d575b600080fd5b6101076004803603604081101561004457600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019064010000000081111561008157600080fd5b82018360208201111561009357600080fd5b803590602001918460018302840111640100000000831117156100b557600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f8201169050808301925050505050505091929192905050506101b8565b604051808315151515815260200180602001828103825283818151815260200191508051906020019080838360005b83811015610151578082015181840152602081019050610136565b50505050905090810190601f16801561017e5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b34801561019957600080fd5b506101a26103d2565b6040518082815260200191505060405180910390f35b60006060600060608573ffffffffffffffffffffffffffffffffffffffff1634866040518082805190602001908083835b6020831061020c57805182526020820191506020810190506020830392506101e9565b6001836020036101000a03801982511681845116808217855250505050505090500191505060006040518083038185875af1925050503d806000811461026e576040519150601f19603f3d011682016040523d82523d6000602084013e610273565b606091505b50915091508573ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f0c991d70033760b32e5748ac2414f25b432c49b28384ae56735d92f79468e1f68734868660405180806020018581526020018415151515815260200180602001838103835287818151815260200191508051906020019080838360005b8381101561031f578082015181840152602081019050610304565b50505050905090810190601f16801561034c5780820380516001836020036101000a031916815260200191505b50838103825284818151815260200191508051906020019080838360005b8381101561038557808201518184015260208101905061036a565b50505050905090810190601f1680156103b25780820380516001836020036101000a031916815260200191505b50965050505050505060405180910390a381819350935050509250929050565b60004290509056fea265627a7a72315820d45c71fb35b0e740aeeac174d13b75f85c42c04a23f61cad04d0d3aa2e77b5ee64736f6c63430005110032",
+  "deployedBytecode": "0x6080604052600436106100295760003560e01c80636fadcf721461002e578063adb618321461018d575b600080fd5b6101076004803603604081101561004457600080fd5b81019080803573ffffffffffffffffffffffffffffffffffffffff1690602001909291908035906020019064010000000081111561008157600080fd5b82018360208201111561009357600080fd5b803590602001918460018302840111640100000000831117156100b557600080fd5b91908080601f016020809104026020016040519081016040528093929190818152602001838380828437600081840152601f19601f8201169050808301925050505050505091929192905050506101b8565b604051808315151515815260200180602001828103825283818151815260200191508051906020019080838360005b83811015610151578082015181840152602081019050610136565b50505050905090810190601f16801561017e5780820380516001836020036101000a031916815260200191505b50935050505060405180910390f35b34801561019957600080fd5b506101a26103d2565b6040518082815260200191505060405180910390f35b60006060600060608573ffffffffffffffffffffffffffffffffffffffff1634866040518082805190602001908083835b6020831061020c57805182526020820191506020810190506020830392506101e9565b6001836020036101000a03801982511681845116808217855250505050505090500191505060006040518083038185875af1925050503d806000811461026e576040519150601f19603f3d011682016040523d82523d6000602084013e610273565b606091505b50915091508573ffffffffffffffffffffffffffffffffffffffff163373ffffffffffffffffffffffffffffffffffffffff167f0c991d70033760b32e5748ac2414f25b432c49b28384ae56735d92f79468e1f68734868660405180806020018581526020018415151515815260200180602001838103835287818151815260200191508051906020019080838360005b8381101561031f578082015181840152602081019050610304565b50505050905090810190601f16801561034c5780820380516001836020036101000a031916815260200191505b50838103825284818151815260200191508051906020019080838360005b8381101561038557808201518184015260208101905061036a565b50505050905090810190601f1680156103b25780820380516001836020036101000a031916815260200191505b50965050505050505060405180910390a381819350935050509250929050565b60004290509056fea265627a7a72315820d45c71fb35b0e740aeeac174d13b75f85c42c04a23f61cad04d0d3aa2e77b5ee64736f6c63430005110032",
+  "sourceMap": "66:31:13:-;;;;8:9:-1;5:2;;;30:1;27;20:12;5:2;66:31:13;;;;;;;",
+  "deployedSourceMap": "66:31:13:-;;;;;;;;;;;;;;;;;;;;;;;;;;227:331:0;;;;;;13:2:-1;8:3;5:11;2:2;;;29:1;26;19:12;2:2;227:331:0;;;;;;;;;;;;;;;;;;;;;21:11:-1;8;5:28;2:2;;;46:1;43;36:12;2:2;227:331:0;;35:9:-1;28:4;12:14;8:25;5:40;2:2;;;58:1;55;48:12;2:2;227:331:0;;;;;;100:9:-1;95:1;81:12;77:20;67:8;63:35;60:50;39:11;25:12;22:29;11:107;8:2;;;131:1;128;121:12;8:2;227:331:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;30:3:-1;22:6;14;1:33;99:1;93:3;85:6;81:16;74:27;137:4;133:9;126:4;121:3;117:14;113:30;106:37;;169:3;161:6;157:16;147:26;;227:331:0;;;;;;;;;;;;;;;:::i;:::-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;227:331:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;564:123;;8:9:-1;5:2;;;30:1;27;20:12;5:2;564:123:0;;;:::i;:::-;;;;;;;;;;;;;;;;;;;227:331;325:4;331:12;360;374:23;401:3;:8;;416:9;427:5;401:32;;;;;;;;;;;;;36:153:-1;66:2;61:3;58:11;36:153;;182:3;176:10;171:3;164:23;98:2;93:3;89:12;82:19;;123:2;118:3;114:12;107:19;;148:2;143:3;139:12;132:19;;36:153;;;274:1;267:3;263:2;259:12;254:3;250:22;246:30;315:4;311:9;305:3;299:10;295:26;356:4;350:3;344:10;340:21;389:7;380;377:20;372:3;365:33;3:399;;;401:32:0;;;;;;;;;;;;;;;;;;;;;;;;;14:1:-1;21;16:31;;;;75:4;69:11;64:16;;144:4;140:9;133:4;115:16;111:27;107:43;104:1;100:51;94:4;87:65;169:16;166:1;159:27;225:16;222:1;215:4;212:1;208:12;193:49;7:242;;16:31;36:4;31:9;;7:242;;359:74:0;;;;470:3;448:65;;458:10;448:65;;;475:5;482:9;493:7;502:10;448:65;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;448:65:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;23:1:-1;8:100;33:3;30:1;27:10;8:100;;;99:1;94:3;90:11;84:18;80:1;75:3;71:11;64:39;52:2;49:1;45:10;40:15;;8:100;;;12:14;448:65:0;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;531:7;540:10;523:28;;;;;;227:331;;;;;:::o;564:123::-;635:7;665:15;658:22;;564:123;:::o",
+  "source": "pragma solidity ^0.5.17;\n\nimport \"../../common.5/DebugBase.sol\";\n\ncontract Debug is DebugBase { }",
+  "sourcePath": "/Users/sjalq/git/dEth/__tmp/smart-contracts/dEth2/contracts/TestHelpers.sol",
+  "ast": {
+    "absolutePath": "/Users/sjalq/git/dEth/__tmp/smart-contracts/dEth2/contracts/TestHelpers.sol",
+    "exportedSymbols": {
+      "Debug": [
+        9492
+      ]
+    },
+    "id": 9493,
+    "nodeType": "SourceUnit",
+    "nodes": [
+      {
+        "id": 9488,
+        "literals": [
+          "solidity",
+          "^",
+          "0.5",
+          ".17"
+        ],
+        "nodeType": "PragmaDirective",
+        "src": "0:24:13"
+      },
+      {
+        "absolutePath": "/Users/sjalq/git/dEth/__tmp/smart-contracts/common.5/DebugBase.sol",
+        "file": "../../common.5/DebugBase.sol",
+        "id": 9489,
+        "nodeType": "ImportDirective",
+        "scope": 9493,
+        "sourceUnit": 66,
+        "src": "26:38:13",
+        "symbolAliases": [],
+        "unitAlias": ""
+      },
+      {
+        "baseContracts": [
+          {
+            "arguments": null,
+            "baseName": {
+              "contractScope": null,
+              "id": 9490,
+              "name": "DebugBase",
+              "nodeType": "UserDefinedTypeName",
+              "referencedDeclaration": 65,
+              "src": "84:9:13",
+              "typeDescriptions": {
+                "typeIdentifier": "t_contract$_DebugBase_$65",
+                "typeString": "contract DebugBase"
+              }
+            },
+            "id": 9491,
+            "nodeType": "InheritanceSpecifier",
+            "src": "84:9:13"
+          }
+        ],
+        "contractDependencies": [
+          65
+        ],
+        "contractKind": "contract",
+        "documentation": null,
+        "fullyImplemented": true,
+        "id": 9492,
+        "linearizedBaseContracts": [
+          9492,
+          65
+        ],
+        "name": "Debug",
+        "nodeType": "ContractDefinition",
+        "nodes": [],
+        "scope": 9493,
+        "src": "66:31:13"
+      }
+    ],
+    "src": "0:97:13"
+  },
+  "legacyAST": {
+    "attributes": {
+      "absolutePath": "/Users/sjalq/git/dEth/__tmp/smart-contracts/dEth2/contracts/TestHelpers.sol",
+      "exportedSymbols": {
+        "Debug": [
+          9492
+        ]
+      }
+    },
+    "children": [
+      {
+        "attributes": {
+          "literals": [
+            "solidity",
+            "^",
+            "0.5",
+            ".17"
+          ]
+        },
+        "id": 9488,
+        "name": "PragmaDirective",
+        "src": "0:24:13"
+      },
+      {
+        "attributes": {
+          "SourceUnit": 66,
+          "absolutePath": "/Users/sjalq/git/dEth/__tmp/smart-contracts/common.5/DebugBase.sol",
+          "file": "../../common.5/DebugBase.sol",
+          "scope": 9493,
+          "symbolAliases": [
+            null
+          ],
+          "unitAlias": ""
+        },
+        "id": 9489,
+        "name": "ImportDirective",
+        "src": "26:38:13"
+      },
+      {
+        "attributes": {
+          "contractDependencies": [
+            65
+          ],
+          "contractKind": "contract",
+          "documentation": null,
+          "fullyImplemented": true,
+          "linearizedBaseContracts": [
+            9492,
+            65
+          ],
+          "name": "Debug",
+          "nodes": [
+            null
+          ],
+          "scope": 9493
+        },
+        "children": [
+          {
+            "attributes": {
+              "arguments": null
+            },
+            "children": [
+              {
+                "attributes": {
+                  "contractScope": null,
+                  "name": "DebugBase",
+                  "referencedDeclaration": 65,
+                  "type": "contract DebugBase"
+                },
+                "id": 9490,
+                "name": "UserDefinedTypeName",
+                "src": "84:9:13"
+              }
+            ],
+            "id": 9491,
+            "name": "InheritanceSpecifier",
+            "src": "84:9:13"
+          }
+        ],
+        "id": 9492,
+        "name": "ContractDefinition",
+        "src": "66:31:13"
+      }
+    ],
+    "id": 9493,
+    "name": "SourceUnit",
+    "src": "0:97:13"
+  },
+  "compiler": {
+    "name": "solc",
+    "version": "0.5.17+commit.d19bba13.Emscripten.clang"
+  },
+  "networks": {},
+  "schemaVersion": "3.3.4",
+  "updatedAt": "2021-07-07T13:24:59.692Z",
+  "devdoc": {
+    "methods": {}
+  },
+  "userdoc": {
+    "methods": {}
+  }
+}
