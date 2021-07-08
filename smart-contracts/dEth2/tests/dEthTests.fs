@@ -113,8 +113,7 @@ let giveCDPToDSProxyTestBase shouldThrow =
 
     let executeGiveCDPFromPrivateKey shouldThrow =
         let ethConn = 
-            if shouldThrow 
-            then 
+            if shouldThrow then 
                 (Debug(EthereumConnection(hardhatURI, hardhatPrivKey2)) :> IAsyncTxSender) 
             else 
                 ethConn :> IAsyncTxSender
@@ -124,13 +123,13 @@ let giveCDPToDSProxyTestBase shouldThrow =
     
     let giveCDPToDSProxyReceipt = executeGiveCDPFromPrivateKey shouldThrow
 
-    if shouldThrow
-        then
-            let forwardEvent = debug.DecodeForwardedEvents giveCDPToDSProxyReceipt |> Seq.head
-            forwardEvent |> shouldRevertWithUnknownMessage
-        else
-            giveCDPToDSProxyReceipt.Succeeded () |> should equal true
-        
+    if shouldThrow then
+        let forwardEvent = debug.DecodeForwardedEvents giveCDPToDSProxyReceipt |> Seq.head
+        forwardEvent |> shouldRevertWithUnknownMessage
+    else
+        giveCDPToDSProxyReceipt.Succeeded () |> should equal true
+        dEthContract.Query "riskLimit" [||] |> should equal 0
+
 
 [<Specification("dEth", "giveCDPToDSProxy", 0)>]
 [<Fact>]
