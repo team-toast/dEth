@@ -309,7 +309,7 @@ let ``dEth - redeem - someone without a balance can never redeem Ether`` tokensA
 [<InlineData(0.01)>]
 [<InlineData(0.001)>]
 [<InlineData(0.0001)>]
-[<InlineData(0.0)>] // a test case checking that no-one providing no ether can issue themselves any deth
+[<InlineData(0.0)>] // a test case checking that no-one providing no ether can issue themselves any dEth
 let ``dEth - squanderMyEthForWorthlessBeansAndAgreeToTerms - anyone providing a positive balance of Ether can issue themselves the expected amount of dEth`` (providedCollateral:float) =
     restore ()
 
