@@ -128,7 +128,7 @@ let giveCDPToDSProxyTestBase shouldThrow =
         forwardEvent |> shouldRevertWithUnknownMessage
     else
         giveCDPToDSProxyReceipt.Succeeded () |> should equal true
-        dEthContract.Query "riskLimit" [||] |> should equal 0
+        dEthContract.Query "riskLimit" [||] |> should equal (BigInteger 0)
 
 
 [<Specification("dEth", "giveCDPToDSProxy", 0)>]
