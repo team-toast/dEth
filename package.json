@@ -3,7 +3,9 @@
   "version": "2.0.0",
   "description": "derived ether",
   "main": "hardhat.config.js",
-  "dependencies": {},
+  "dependencies": {
+    "@openzeppelin/contracts": "^2.5.0"
+  },
   "devDependencies": {
     "@nomiclabs/hardhat-ethers": "^2.0.2",
     "@nomiclabs/hardhat-waffle": "^2.0.1",

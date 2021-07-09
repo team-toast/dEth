@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "../../common.5/openzeppelin/math/SafeMath.sol";
-import "../../common.5/openzeppelin/token/ERC20/IERC20.sol";
+import "@openzeppelin/contracts/math/SafeMath.sol";
+import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 
 contract IERC20Wrapper is IERC20
 {

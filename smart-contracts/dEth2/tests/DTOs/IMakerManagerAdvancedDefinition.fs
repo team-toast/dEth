@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.IMakerManagerAdvanced.ContractDefinition
+namespace dEth2.Contracts.IMakerManagerAdvanced.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

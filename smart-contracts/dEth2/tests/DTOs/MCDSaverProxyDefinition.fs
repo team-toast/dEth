@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.MCDSaverProxy.ContractDefinition
+namespace dEth2.Contracts.MCDSaverProxy.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

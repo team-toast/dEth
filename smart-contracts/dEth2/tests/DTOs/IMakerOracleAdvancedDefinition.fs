@@ -1,4 +1,4 @@
-namespace DEth.Contracts.IMakerOracleAdvanced.ContractDefinition
+namespace DEth.Contracts.IMakerOracleAdvanced.ContractDefinitionOLD
 
 open System
 open System.Threading.Tasks

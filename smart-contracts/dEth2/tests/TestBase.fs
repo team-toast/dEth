@@ -18,9 +18,10 @@ open FsUnit.Xunit
 open Microsoft.FSharp.Control
 open Newtonsoft.Json
 open Newtonsoft.Json.Linq
-open Foundry.Contracts.Debug.ContractDefinition
+//open Foundry.Contracts.Debug.ContractDefinition
 open Constants
 open Microsoft.Extensions.Configuration
+open SolidityTypes
 
 module Array =
     let ensureSize size array =
@@ -229,16 +230,16 @@ type Debug(ethConn: EthereumConnection) =
             data |> this.AsyncTxSender.SendTxAsync this.ContractPlug.Address value
 
     member this.DecodeForwardedEvents(receipt: TransactionReceipt) =
-        receipt.DecodeAllEvents<ForwardedEventDTO>() |> Seq.map (fun i -> i.Event)
+        receipt.DecodeAllEvents<Contracts.DebugContract.ForwardedEventDTO>() |> Seq.map (fun i -> i.Event)
 
     member this.BlockTimestamp:BigInteger = 
         this.ContractPlug.Query "blockTimestamp" [||]
 
-type ForwardedEventDTO with
+type Contracts.DebugContract.ForwardedEventDTO with
     member this.ResultAsRevertMessage =
-        match this.Success with
+        match this._success with
         | true -> None
-        | _ -> Some(Encoding.ASCII.GetString(this.ResultData))
+        | _ -> Some(Encoding.ASCII.GetString(this._resultData))
 
 [<AttributeUsage(AttributeTargets.Method, AllowMultiple = true)>]
 type SpecificationAttribute(contractName, functionName, specCode) =
@@ -273,12 +274,12 @@ let shouldEqualIgnoringCase (a: string) (b: string) =
 let shouldSucceed (txr: TransactionReceipt) = txr.Status |> should equal (hexBigInt 1UL)
 let shouldFail (txr: TransactionReceipt) = txr.Status |> should equal (hexBigInt 0UL)
 
-let shouldRevertWithMessage expectedMessage (forwardedEvent: ForwardedEventDTO) =
+let shouldRevertWithMessage expectedMessage (forwardedEvent: Contracts.DebugContract.ForwardedEventDTO) =
     match forwardedEvent.ResultAsRevertMessage with
     | None -> failwith "not a revert message"
     | Some actualMessage -> actualMessage |> should haveSubstring expectedMessage
 
-let shouldRevertWithUnknownMessage (forwardedEvent: ForwardedEventDTO) =
+let shouldRevertWithUnknownMessage (forwardedEvent: Contracts.DebugContract.ForwardedEventDTO) =
     shouldRevertWithMessage "" forwardedEvent
 
 let decodeEvents<'a when 'a: (new: unit -> 'a)> (receipt: TransactionReceipt) =

@@ -1,4 +1,4 @@
-namespace dEth2.Contracts.SaverProxyActions.ContractDefinition
+namespace dEth2.Contracts.SaverProxyActions.ContractDefinitionOLD
 
 open System.Numerics
 open Nethereum.ABI.FunctionEncoding.Attributes
